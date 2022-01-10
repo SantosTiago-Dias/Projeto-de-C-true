@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1641224549 source:c:\users\tiago\desktop\ipl_escola\programação\projeto\aluno\main.c
+	<stdio.h>
+	<stdlib.h>
+	<locale.h>
+	<ctype.h>
+	<string.h>
+

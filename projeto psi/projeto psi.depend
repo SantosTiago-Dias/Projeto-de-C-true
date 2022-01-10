@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1641810997 source:c:\users\tiago\desktop\ipl_escola\programação\projeto\projeto psi\main.c
+	<stdio.h>
+	<stdlib.h>
+	<locale.h>
+	<ctype.h>
+
