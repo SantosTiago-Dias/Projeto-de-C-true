@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>Projeto-de-C
-Projeto - de - C
 
 #include <ctype.h>
 
@@ -9,8 +8,8 @@ Projeto - de - C
 #define MAX_ALUNOS 3
 #define MAX_EMAIL 80
 #define MAX_TRASANCAO 10
-    //Estrutura escola
-    typedef struct // nome da estrutura
+//Estrutura escola
+typedef struct // nome da estrutura
 {
     int id_escola;
     char nome[80], abv[5], campus[10], localidade[25];
