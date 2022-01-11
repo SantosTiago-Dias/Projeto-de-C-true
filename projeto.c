@@ -38,7 +38,7 @@ int menu_registar_mostrar();
 int prenche_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
 void mostrar_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
 int prenche_alunos(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_alunos, int n_escola);
-void prenche_id_escola(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
+int prenche_id_escola(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
 void verifica_email(t_estrutura_aluno aluno[MAX_ALUNOS], int pos);
 void tipo_utilizador(t_estrutura_aluno aluno[MAX_ALUNOS], int pos);
 void mostrar_aluno(t_estrutura_aluno aluno[MAX_ALUNOS], int n_alunos);
@@ -244,8 +244,6 @@ int menu_de_estatisticas()
 int prenche_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
 {
 
-    //printf("Introduza a indentificação da escola nº%d: ",n_alunos);
-    //scanf("%d", &escola[n_alunos].id_escola);
     printf("Indentifiçao da escola:%d", n_escola + 1);
     escola[n_escola].id_escola = n_escola;
     printf("\nIntroduza nome da escola: ");
@@ -292,7 +290,7 @@ int prenche_alunos(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola escol
     printf("\nIntroduza nome do aluno: ");
     fflush(stdin);
     scanf("%[^\n]", aluno[n_alunos].nome);
-    prenche_id_escola(aluno, escola, n_escola);
+    aluno[n_alunos].id_escola = prenche_id_escola(aluno, escola, n_escola);
     verifica_email(aluno, n_alunos);
     tipo_utilizador(aluno, n_alunos);
     printf("Introduza o nif:");
@@ -305,7 +303,7 @@ int prenche_alunos(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola escol
 //FIM preenche so alunos
 
 //Inicio de mostra o id _escola
-void prenche_id_escola(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
+int prenche_id_escola(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
 {
     int cont;
     int aux;
@@ -324,6 +322,7 @@ void prenche_id_escola(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola e
             sleep(2);
         }
     } while (aux < 0 || aux > 6);
+    return aux;
 }
 //fim de mostra o id escola
 
@@ -384,17 +383,18 @@ void tipo_utilizador(t_estrutura_aluno aluno[MAX_ALUNOS], int posicao_aluno)
 //inicio mostar alunos
 void mostrar_aluno(t_estrutura_aluno aluno[MAX_ALUNOS], int n_alunos)
 {
-    int pos;
+    int posicao;
     char sair;
-    for (pos = 0; pos < n_alunos; pos++)
+
+    for (posicao = 0; posicao < n_alunos; posicao++)
     {
-        printf("\nIdentidade: %d", aluno[n_alunos].id_aluno + 1);
-        printf("\nId escola: %d", aluno[n_alunos].id_escola + 1);
-        printf("\nNome: %s", aluno[n_alunos].nome);
-        printf("\nEmail: %s", aluno[n_alunos].email);
-        printf("\nTipo de user: %s", aluno[n_alunos].tipo_utilizador);
-        printf("\nSaldo:%.2f", aluno[n_alunos].saldo);
-        printf("\nNif: %d", aluno[n_alunos].nif);
+        printf("\n\nIdentidade: %d", aluno[posicao].id_aluno);
+        printf("\nId escola: %d", aluno[posicao].id_escola);
+        printf("\nNome: %s", aluno[posicao].nome);
+        printf("\nEmail: %s", aluno[posicao].email);
+        printf("\nTipo de user: %s", aluno[posicao].tipo_utilizador);
+        printf("\nSaldo:%.2f", aluno[posicao].saldo);
+        printf("\nNif: %d", aluno[posicao].nif);
     }
     printf("\nClique em algo para voltar ao menu inicial");
     getch();
