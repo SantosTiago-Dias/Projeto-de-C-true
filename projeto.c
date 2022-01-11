@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>Projeto-de-C
-
+#include <locale.h>
+#include <time.h>
 #include <ctype.h>
 
 #define MAX_ESCOLA 2
@@ -9,14 +9,14 @@
 #define MAX_EMAIL 80
 #define MAX_TRASANCAO 10
 //Estrutura escola
-typedef struct // nome da estrutura
+typedef struct
 {
     int id_escola;
     char nome[80], abv[5], campus[10], localidade[25];
 } t_estrutura_escola;
 
 //Estrutura alunos
-typedef struct // nome da estrutura
+typedef struct
 {
     int id_aluno, id_escola, nif;
     float saldo;
@@ -24,11 +24,11 @@ typedef struct // nome da estrutura
 } t_estrutura_aluno;
 
 //Estrutura transações
-typedef struct // nome da estrutura
+typedef struct
 {
-    int id_transacao, id_aluno;
-    char tipo_trasancao[80], morada[50]; // campos
-    float valor_transicao;               // estrutura
+    int id_transacao, id_aluno, horas_da_transicao, minutos_da_transicao, segundos_da_transicao, dia_da_transicao, mes_da_trasicao, ano_da_transicao;
+    char tipo_trasancao[80], morada[50];
+    float valor_transicao;
 } t_transacoes;
 
 int menu_inicial();
@@ -42,12 +42,14 @@ int prenche_id_escola(t_estrutura_aluno aluno[MAX_ALUNOS], t_estrutura_escola es
 void verifica_email(t_estrutura_aluno aluno[MAX_ALUNOS], int pos);
 void tipo_utilizador(t_estrutura_aluno aluno[MAX_ALUNOS], int pos);
 void mostrar_aluno(t_estrutura_aluno aluno[MAX_ALUNOS], int n_alunos);
+int preenche_transacoes(t_estrutura_aluno aluno[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_alunos);
 
 int main()
 {
     setlocale(LC_ALL, "Portuguese"); //defenir a lingua portuguesa
     t_estrutura_escola escola[MAX_ESCOLA];
     t_estrutura_aluno aluno[MAX_ALUNOS];
+    t_transacoes transacoes[MAX_ALUNOS];
     int op;
     int op_estatisticas, op_resgitar_importar;
     int n_alunos = 0, n_escola = 0, n_trasancoes = 0;
@@ -108,10 +110,22 @@ int main()
                 break;
             }
             break;
-
-            break;
         case 3:
-            //Registar e consultar os dados das transações
+            //Trasacoes
+            op_resgitar_importar = menu_registar_mostrar();
+            switch (op_resgitar_importar)
+            {
+            case 1:
+                system("cls");
+                n_trasancoes = preenche_transacoes(aluno, transacoes, n_trasancoes, n_alunos);
+                //mostrar_escola(escola);
+                break;
+
+            case 2:
+                system("cls");
+                mostrar_aluno(aluno, n_alunos);
+                break;
+            }
             break;
         case 4:
             //Estatísticas
@@ -398,6 +412,19 @@ void mostrar_aluno(t_estrutura_aluno aluno[MAX_ALUNOS], int n_alunos)
     }
     printf("\nClique em algo para voltar ao menu inicial");
     getch();
+}
+
+int preenche_transacoes(t_estrutura_aluno aluno[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_alunos)
+{
+    printf("Indentifiçao da trasação:%d", n_trasacoes + 1);
+    transacoes[n_trasacoes].id_transacao = n_trasacoes;
+    //funcao nif do aluno
+    //funcao se e pagamento ou carregamento
+    printf("Introduza o valor:");
+    scanf("%f", transacoes[n_trasacoes].valor_transicao);
+
+    n_trasacoes++;
+    return n_trasacoes;
 }
 
 // fim de mostrar alunos
