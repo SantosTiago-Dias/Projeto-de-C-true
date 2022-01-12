@@ -43,6 +43,7 @@ void verifica_email(t_estrutura_aluno aluno[MAX_ALUNOS], int pos);
 void tipo_utilizador(t_estrutura_aluno aluno[MAX_ALUNOS], int pos);
 void mostrar_aluno(t_estrutura_aluno aluno[MAX_ALUNOS], int n_alunos);
 int preenche_transacoes(t_estrutura_aluno aluno[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_alunos);
+void tipo_trasancao(t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes);
 
 int main()
 {
@@ -362,9 +363,6 @@ void verifica_email(t_estrutura_aluno aluno[MAX_ALUNOS], int posicao_aluno)
 //Inicio de tipo_utilizador
 void tipo_utilizador(t_estrutura_aluno aluno[MAX_ALUNOS], int posicao_aluno)
 {
-
-    //return "my String";
-
     int utilizador;
     do
     {
@@ -416,16 +414,58 @@ void mostrar_aluno(t_estrutura_aluno aluno[MAX_ALUNOS], int n_alunos)
 
 int preenche_transacoes(t_estrutura_aluno aluno[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_alunos)
 {
+    time_t now;
     printf("Indentifiçao da trasação:%d", n_trasacoes + 1);
     transacoes[n_trasacoes].id_transacao = n_trasacoes;
     //funcao nif do aluno
-    //funcao se e pagamento ou carregamento
-    printf("Introduza o valor:");
-    scanf("%f", transacoes[n_trasacoes].valor_transicao);
+    tipo_trasancao(transacoes, n_trasacoes);
+    printf("\nIntroduza o valor:");
+    scanf("%f", &transacoes[n_trasacoes].valor_transicao);
+    // Obtain current time
+    // recebe o valor das horas do
+    time(&now);
+    transacoes[n_trasacoes].horas_da_transicao = localtime(&now)->tm_hour;  //recebe a horas entre o intervalo (0-23)
+    transacoes[n_trasacoes].minutos_da_transicao = localtime(&now)->tm_min; //recebe a horas entre o intervalo (0-23)
+    transacoes[n_trasacoes].segundos_da_transicao = localtime(&now)->tm_sec;
 
+    transacoes[n_trasacoes].dia_da_transicao = localtime(&now)->tm_mday;        // recebe o dia do ano (1-31)
+    transacoes[n_trasacoes].mes_da_trasicao = localtime(&now)->tm_mon + 1;      // como a função copmecça a contar do mes 0 temos de somar +1 para dar o mes atual
+    transacoes[n_trasacoes].ano_da_transicao = localtime(&now)->tm_year + 1900; // e preciso de somar 1900 pois esta função so começa a contar a partir do ano 1900
+    printf("\nData : %02d/%02d/%d\n", transacoes[n_trasacoes].dia_da_transicao, transacoes[n_trasacoes].mes_da_trasicao, transacoes[n_trasacoes].ano_da_transicao);
+    printf("\nHoras: %02d:%02d:%02d", transacoes[n_trasacoes].horas_da_transicao, transacoes[n_trasacoes].minutos_da_transicao, transacoes[n_trasacoes].segundos_da_transicao);
+    getch();
     n_trasacoes++;
     return n_trasacoes;
 }
+
+void tipo_trasancao(t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes)
+{
+    int trasacao;
+    do
+    {
+
+        printf("\n 1 - Pagamento");
+        printf("\t 2 - Carregamento");
+        printf("\t 3 - Funcionario");
+        printf("\n Tipo de utilizador-->");
+        scanf("%d", &trasacao);
+
+        switch (trasacao)
+        {
+        case 1:
+            //printf("Estudante");
+            strcpy(transacoes[n_trasacoes].tipo_trasancao, "Pagamento");
+            break;
+        case 2:
+            strcpy(transacoes[n_trasacoes].tipo_trasancao, "Carregamento");
+            break;
+        default:
+            printf("Insira o valor certo");
+        }
+    } while (trasacao < 0 || trasacao > 2);
+}
+
+//Fim de verifica email
 
 // fim de mostrar alunos
 
