@@ -21,7 +21,7 @@ typedef struct
     int id_aluno, id_escola, nif;
     float saldo;
     char nome[80], tipo_utilizador[50], email[80];
-} t_estrutura_alunos;
+} t_estrutura_utilizadores;
 
 // Estrutura transações
 typedef struct
@@ -37,24 +37,26 @@ int menu_registar_importar();
 int menu_registar_mostrar();
 int prenche_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
 void mostrar_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
-int prenche_alunos(t_estrutura_alunos alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_alunos, int n_escola);
-int prenche_id_escola(t_estrutura_alunos alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
-void verifica_email(t_estrutura_alunos alunos[MAX_ALUNOS], int pos);
-void tipo_utilizador(t_estrutura_alunos alunos[MAX_ALUNOS], int pos);
-void mostrar_aluno(t_estrutura_alunos alunos[MAX_ALUNOS], int n_alunos);
-int preenche_transacoes(t_estrutura_alunos alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_alunos);
-void tipo_trasancao(t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes);
-int verifica_nif(t_estrutura_alunos alunos[MAX_ALUNOS], int n_alunos);
-
+int prenche_alunos(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_utilizadores, int n_escola);
+int prenche_id_escola(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
+void verifica_email(t_estrutura_utilizadores alunos[MAX_ALUNOS], int pos);
+void tipo_utilizador(t_estrutura_utilizadores alunos[MAX_ALUNOS], int pos);
+void mostrar_aluno(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizadores);
+int preenche_transacoes(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_utilizadores);
+void tipo_trasancao(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_utilizador, int nif_utilizador, int valor);
+int verifica_nif(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizadores);
+char confirmar_saida(char texto[50]);
+void pagamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_utilizador, int nif_utilizador, int valor);
+void carregamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int nif_utilizador, int valor);
 int main()
 {
     setlocale(LC_ALL, "Portuguese"); // defenir a lingua portuguesa
     t_estrutura_escola escola[MAX_ESCOLA];
-    t_estrutura_alunos alunos[MAX_ALUNOS];
+    t_estrutura_utilizadores alunos[MAX_ALUNOS];
     t_transacoes transacoes[MAX_ALUNOS];
     int op;
     int op_estatisticas, op_resgitar_importar;
-    int n_alunos = 0, n_escola = 0, n_trasancoes = 0;
+    int n_utilizadores = 0, n_escola = 0, n_trasancoes = 0;
     do
     {
         op = NULL;
@@ -102,13 +104,13 @@ int main()
             {
             case 1:
                 system("cls");
-                n_alunos = prenche_alunos(alunos, escola, n_alunos, n_escola);
+                n_utilizadores = prenche_alunos(alunos, escola, n_utilizadores, n_escola);
                 // mostrar_escola(escola);
                 break;
 
             case 2:
                 system("cls");
-                mostrar_aluno(alunos, n_alunos);
+                mostrar_aluno(alunos, n_utilizadores);
                 break;
             }
             break;
@@ -119,13 +121,13 @@ int main()
             {
             case 1:
                 system("cls");
-                n_trasancoes = preenche_transacoes(alunos, transacoes, n_trasancoes, n_alunos);
+                n_trasancoes = preenche_transacoes(alunos, transacoes, n_trasancoes, n_utilizadores);
                 // mostrar_escola(escola);
                 break;
 
             case 2:
                 system("cls");
-                mostrar_aluno(alunos, n_alunos);
+                mostrar_aluno(alunos, n_utilizadores);
                 break;
             }
             break;
@@ -213,10 +215,10 @@ int menu_registar_importar()
     return op;
 }
 
-char confirmar_saida()
+char confirmar_saida(char texto[50])
 {
     char sair;
-    printf("Tem certeza que deseja sair?S(SIM)/N(Não)");
+    printf("\n%s", texto);
     scanf(" %c", &sair);
     return toupper(sair);
 }
@@ -307,27 +309,27 @@ void mostrar_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
 // INICIO ALUNO
 
 // Função preenche so alunos
-int prenche_alunos(t_estrutura_alunos alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_alunos, int n_escola)
+int prenche_alunos(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_utilizadores, int n_escola)
 {
-    printf("\nIndentificação do aluno nº:%d ", n_alunos + 1);
-    alunos[n_alunos].id_aluno = n_alunos;
-    printf("\nIntroduza nome do aluno: ");
+    printf("\nIndentificação:nº:%d ", n_utilizadores + 1);
+    alunos[n_utilizadores].id_aluno = n_utilizadores;
+    printf("\nIntroduzao o nome:");
     fflush(stdin);
-    scanf("%[^\n]", alunos[n_alunos].nome);
-    alunos[n_alunos].id_escola = prenche_id_escola(alunos, escola, n_escola);
-    verifica_email(alunos, n_alunos);
-    tipo_utilizador(alunos, n_alunos);
+    scanf("%[^\n]", alunos[n_utilizadores].nome);
+    alunos[n_utilizadores].id_escola = prenche_id_escola(alunos, escola, n_escola);
+    verifica_email(alunos, n_utilizadores);
+    tipo_utilizador(alunos, n_utilizadores);
     printf("Introduza o nif:");
-    scanf("%d", &alunos[n_alunos].nif);
+    scanf("%d", &alunos[n_utilizadores].nif);
     printf("Introduza o saldo:");
-    scanf("%f", &alunos[n_alunos].saldo);
-    n_alunos++;
-    return n_alunos++;
+    scanf("%f", &alunos[n_utilizadores].saldo);
+    n_utilizadores++;
+    return n_utilizadores++;
 }
 // FIM preenche so alunos
 
 // Inicio de mostra o id _escola
-int prenche_id_escola(t_estrutura_alunos alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
+int prenche_id_escola(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
 {
     int cont;
     int aux;
@@ -351,11 +353,11 @@ int prenche_id_escola(t_estrutura_alunos alunos[MAX_ALUNOS], t_estrutura_escola 
 // fim de mostra o id escola
 
 // Inicio de verifica email
-void verifica_email(t_estrutura_alunos alunos[MAX_ALUNOS], int posicao_aluno)
+void verifica_email(t_estrutura_utilizadores alunos[MAX_ALUNOS], int posicao_aluno)
 {
     char email[80];
     int posicao = 0;
-    printf("Introduza email do aluno: ");
+    printf("Insira o email:");
     fflush(stdin);
     scanf("%[^\n]", email);
 
@@ -370,7 +372,7 @@ void verifica_email(t_estrutura_alunos alunos[MAX_ALUNOS], int posicao_aluno)
 // Fim de verifica email
 
 // Inicio de tipo_utilizador
-void tipo_utilizador(t_estrutura_alunos alunos[MAX_ALUNOS], int posicao_aluno)
+void tipo_utilizador(t_estrutura_utilizadores alunos[MAX_ALUNOS], int posicao_aluno)
 {
     int utilizador;
     do
@@ -402,12 +404,12 @@ void tipo_utilizador(t_estrutura_alunos alunos[MAX_ALUNOS], int posicao_aluno)
 // Fim de tipo_utilizador
 
 // inicio mostar alunos
-void mostrar_aluno(t_estrutura_alunos alunos[MAX_ALUNOS], int n_alunos)
+void mostrar_aluno(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizadores)
 {
     int posicao;
-    for (posicao = 0; posicao < n_alunos; posicao++)
+    for (posicao = 0; posicao < n_utilizadores; posicao++)
     {
-        printf("\n\nIdentidade: %d", alunos[posicao].id_aluno);
+        printf("\n\nIdentidade: %d", alunos[posicao].id_aluno + 1);
         printf("\nId escola: %d", alunos[posicao].id_escola);
         printf("\nNome: %s", alunos[posicao].nome);
         printf("\nEmail: %s", alunos[posicao].email);
@@ -419,15 +421,16 @@ void mostrar_aluno(t_estrutura_alunos alunos[MAX_ALUNOS], int n_alunos)
     getch();
 }
 
-int preenche_transacoes(t_estrutura_alunos alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_alunos)
+int preenche_transacoes(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_utilizadores)
 {
     time_t now;
     printf("Indentifiçao da trasação:%d", n_trasacoes + 1);
+    transacoes[n_trasacoes].nif_aluno = verifica_nif(alunos, n_utilizadores);
     transacoes[n_trasacoes].id_transacao = n_trasacoes;
-    transacoes[n_trasacoes].nif_aluno = verifica_nif(alunos, n_alunos);
-    tipo_trasancao(transacoes, n_trasacoes);
     printf("\nIntroduza o valor:");
     scanf("%f", &transacoes[n_trasacoes].valor_transicao);
+
+    tipo_trasancao(alunos, transacoes, n_trasacoes, n_utilizadores, transacoes[n_trasacoes].nif_aluno, transacoes[n_trasacoes].valor_transicao);
 
     // recebe o valor das horas do
     time(&now);
@@ -445,8 +448,34 @@ int preenche_transacoes(t_estrutura_alunos alunos[MAX_ALUNOS], t_transacoes tran
     return n_trasacoes;
 }
 
+// Verifica se o nif que o utilizador inserio
+int verifica_nif(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizadores)
+{
+    int posicao, nif_trasacao, verifica_aluno = 0;
+    char confirmar;
+    do
+    {
+        printf("\nIntroduza o nif:");
+        scanf("%d", &nif_trasacao);
+        for (posicao = 0; posicao < n_utilizadores; posicao++)
+        {
+            if (nif_trasacao == alunos[posicao].nif)
+            {
+                printf("Nome do aluno: %s", alunos[posicao].nome);
+                printf("\nNif do aluno: %d", alunos[posicao].nif);
+                confirmar = confirmar_saida("Este e o nif?(S/N)");
+                if (confirmar == 'S')
+                    verifica_aluno = 1;
+            }
+        }
+        if (verifica_aluno == 0)
+        {
+            printf("Introduza um nif valido");
+        }
+    } while (verifica_aluno == 0 && confirmar != 'S');
+}
 // Verifica qual se o utilizador que fazer um pagamento ou carregamento
-void tipo_trasancao(t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes)
+void tipo_trasancao(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_utilizador, int nif_utilizador, int valor)
 {
     int trasacao;
     do
@@ -462,6 +491,7 @@ void tipo_trasancao(t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes)
         case 1:
             // printf("Estudante");
             strcpy(transacoes[n_trasacoes].tipo_trasancao, "Pagamento");
+            pagamento(alunos, transacoes, n_utilizador, nif_utilizador, valor);
             break;
         case 2:
             strcpy(transacoes[n_trasacoes].tipo_trasancao, "Carregamento");
@@ -472,33 +502,21 @@ void tipo_trasancao(t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes)
     } while (trasacao < 0 || trasacao > 2);
 }
 
-// Verifica se o nif que o utilizador inserio
-int verifica_nif(t_estrutura_alunos alunos[MAX_ALUNOS], int n_alunos)
+void pagamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_utilizador, int nif_utilizador, int valor)
 {
-    int posicao, nif_trasacao, verifica_aluno = 0;
-    char confirmar;
-    do
+    int indice;
+    for (indice = 0; indice < n_utilizador; indice++)
     {
-        printf("Introduza o nif do estudante:");
-        scanf("%d", &nif_trasacao);
-        for (posicao = 0; posicao < n_alunos; posicao++)
+        if (nif_utilizador == alunos[indice].nif)
         {
-            if (nif_trasacao == alunos[posicao].nif)
-            {
-                printf("Nome do aluno: %s", alunos[posicao].nome);
-                printf("\nNif do aluno: %d", alunos[posicao].nif);
-                confirmar = confirmar_saida();
-                if (confirmar == 'S')
-                    verifica_aluno = 1;
-            }
+            alunos[indice].saldo =
         }
-        if (verifica_aluno == 0)
-        {
-            printf("\nIntroduza um nif valido");
-        }
-    } while (verifica_aluno == 0 && confirmar != 'S');
+    }
 }
 
+void carregamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int nif_utilizador, int valor)
+{
+}
 // fim de mostrar alunoss
 
 // FIM DOS alunosS
