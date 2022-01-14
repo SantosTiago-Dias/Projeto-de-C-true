@@ -4,29 +4,20 @@
 #include <ctype.h>
 #include <string.h>
 
-
-void idc(char *email);
 int main()
 {
 
-    char email;
-    idc(&email);
-    printf("aqui\n");
-    printf("%s",email);
-    return 0;
-}
-void idc(char *email)
-{
-    printf("Introduza email do aluno: ");
-    fflush(stdin);
-    scanf("%[^\n]",&email);
-
-    for (int i=0; i<80; i++)
+    int a;
+    int b = 0;
+    do
     {
-        if(email[i]=='@')
+        printf("a:%d \n", a);
+        scanf("%d", &a);
+        printf("\nb:%d", b);
+        if (b == a)
         {
-            *email;
+            printf("aqui");
+            b++;
         }
-
-    }
+    } while (b == 0);
 }
