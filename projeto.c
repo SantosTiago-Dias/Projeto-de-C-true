@@ -428,17 +428,17 @@ int preenche_transacoes(t_estrutura_alunos alunos[MAX_ALUNOS], t_transacoes tran
     tipo_trasancao(transacoes, n_trasacoes);
     printf("\nIntroduza o valor:");
     scanf("%f", &transacoes[n_trasacoes].valor_transicao);
-    // Obtain current time
+
     // recebe o valor das horas do
     time(&now);
     transacoes[n_trasacoes].horas_da_transicao = localtime(&now)->tm_hour;  // recebe a horas entre o intervalo (0-23)
     transacoes[n_trasacoes].minutos_da_transicao = localtime(&now)->tm_min; // recebe a horas entre o intervalo (0-23)
     transacoes[n_trasacoes].segundos_da_transicao = localtime(&now)->tm_sec;
-
+    // valor da data atual
     transacoes[n_trasacoes].dia_da_transicao = localtime(&now)->tm_mday;        // recebe o dia do ano (1-31)
     transacoes[n_trasacoes].mes_da_trasicao = localtime(&now)->tm_mon + 1;      // como a função copmecça a contar do mes 0 temos de somar +1 para dar o mes atual
     transacoes[n_trasacoes].ano_da_transicao = localtime(&now)->tm_year + 1900; // e preciso de somar 1900 pois esta função so começa a contar a partir do ano 1900
-    printf("\nData : %02d/%02d/%d\n", transacoes[n_trasacoes].dia_da_transicao, transacoes[n_trasacoes].mes_da_trasicao, transacoes[n_trasacoes].ano_da_transicao);
+    printf("\nData : %02d/%02d/%d", transacoes[n_trasacoes].dia_da_transicao, transacoes[n_trasacoes].mes_da_trasicao, transacoes[n_trasacoes].ano_da_transicao);
     printf("\nHoras: %02d:%02d:%02d", transacoes[n_trasacoes].horas_da_transicao, transacoes[n_trasacoes].minutos_da_transicao, transacoes[n_trasacoes].segundos_da_transicao);
     getch();
     n_trasacoes++;
