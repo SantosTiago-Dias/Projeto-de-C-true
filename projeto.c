@@ -27,7 +27,7 @@ typedef struct
 typedef struct
 {
     int id_transacao, nif_aluno, horas_da_transicao, minutos_da_transicao, segundos_da_transicao, dia_da_transicao, mes_da_trasicao, ano_da_transicao;
-    char tipo_trasancao[80], morada[50];
+    char tipo_trasancao[80];
     float valor_transicao;
 } t_transacoes;
 
@@ -46,8 +46,9 @@ int preenche_transacoes(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoe
 void tipo_trasancao(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_utilizador, int nif_utilizador, int valor);
 int verifica_nif(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizadores);
 char confirmar_saida(char texto[50]);
-void pagamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_utilizador, int nif_utilizador, int valor);
-void carregamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int nif_utilizador, int valor);
+void pagamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizador, int nif_utilizador, int valor);
+void carregamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizador, int nif_utilizador, int valor);
+void mostrar_transacao(t_transacoes trasancao[MAX_TRASANCAO], int n_trasacoes);
 int main()
 {
     setlocale(LC_ALL, "Portuguese"); // defenir a lingua portuguesa
@@ -127,7 +128,7 @@ int main()
 
             case 2:
                 system("cls");
-                mostrar_aluno(alunos, n_utilizadores);
+                mostrar_transacao(transacoes, n_trasancoes);
                 break;
             }
             break;
@@ -425,11 +426,10 @@ int preenche_transacoes(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoe
 {
     time_t now;
     printf("Indentifiçao da trasação:%d", n_trasacoes + 1);
-    transacoes[n_trasacoes].nif_aluno = verifica_nif(alunos, n_utilizadores);
     transacoes[n_trasacoes].id_transacao = n_trasacoes;
+    transacoes[n_trasacoes].nif_aluno = verifica_nif(alunos, n_utilizadores);
     printf("\nIntroduza o valor:");
     scanf("%f", &transacoes[n_trasacoes].valor_transicao);
-
     tipo_trasancao(alunos, transacoes, n_trasacoes, n_utilizadores, transacoes[n_trasacoes].nif_aluno, transacoes[n_trasacoes].valor_transicao);
 
     // recebe o valor das horas do
@@ -447,7 +447,6 @@ int preenche_transacoes(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoe
     n_trasacoes++;
     return n_trasacoes;
 }
-
 // Verifica se o nif que o utilizador inserio
 int verifica_nif(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizadores)
 {
@@ -473,6 +472,7 @@ int verifica_nif(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizadores
             printf("Introduza um nif valido");
         }
     } while (verifica_aluno == 0 && confirmar != 'S');
+    return nif_trasacao;
 }
 // Verifica qual se o utilizador que fazer um pagamento ou carregamento
 void tipo_trasancao(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int n_utilizador, int nif_utilizador, int valor)
@@ -491,10 +491,11 @@ void tipo_trasancao(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes tr
         case 1:
             // printf("Estudante");
             strcpy(transacoes[n_trasacoes].tipo_trasancao, "Pagamento");
-            pagamento(alunos, transacoes, n_utilizador, nif_utilizador, valor);
+            pagamento(alunos, n_utilizador, nif_utilizador, valor);
             break;
         case 2:
             strcpy(transacoes[n_trasacoes].tipo_trasancao, "Carregamento");
+            carregamento(alunos, n_utilizador, nif_utilizador, valor);
             break;
         default:
             printf("Insira o valor certo");
@@ -502,21 +503,54 @@ void tipo_trasancao(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes tr
     } while (trasacao < 0 || trasacao > 2);
 }
 
-void pagamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_utilizador, int nif_utilizador, int valor)
+void pagamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizador, int nif_utilizador, int valor)
 {
     int indice;
+
     for (indice = 0; indice < n_utilizador; indice++)
     {
         if (nif_utilizador == alunos[indice].nif)
         {
-            alunos[indice].saldo =
+            if (valor > alunos[indice].saldo)
+            {
+                printf("Valor Insuficiente");
+            }
+            else
+            {
+                alunos[indice].saldo = alunos[indice].saldo - valor;
+            }
         }
     }
 }
 
-void carregamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], t_transacoes transacoes[MAX_TRASANCAO], int n_trasacoes, int nif_utilizador, int valor)
+void carregamento(t_estrutura_utilizadores alunos[MAX_ALUNOS], int n_utilizador, int nif_utilizador, int valor)
 {
+    int indice;
+
+    for (indice = 0; indice < n_utilizador; indice++)
+    {
+        if (nif_utilizador == alunos[indice].nif)
+        {
+            alunos[indice].saldo = alunos[indice].saldo + valor;
+        }
+    }
 }
+
+void mostrar_transacao(t_transacoes trasancao[MAX_TRASANCAO], int n_trasacoes)
+{
+
+    for (int posicao = 0; posicao < n_trasacoes; posicao++)
+    {
+        printf("\nIdentificação da trasação: %d\n", trasancao[posicao].id_transacao + 1);
+        printf("Nif do aluno: %d\n", trasancao[posicao].nif_aluno);
+        printf("Valor: %.2f\n", trasancao[posicao].valor_transicao);
+        printf("\nData : %02d:%02d:%d", trasancao[posicao].dia_da_transicao, trasancao[posicao].mes_da_trasicao, trasancao[posicao].ano_da_transicao);
+        printf("\nHoras: %02d/%02d/%02d", trasancao[posicao].horas_da_transicao, trasancao[posicao].minutos_da_transicao, trasancao[posicao].segundos_da_transicao);
+    }
+    printf("\nClique em algo para voltar ao menu inicial");
+    getch();
+}
+
 // fim de mostrar alunoss
 
 // FIM DOS alunosS
