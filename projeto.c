@@ -12,7 +12,7 @@
 typedef struct
 {
     int id_escola;
-    char nome[80], abv[5], campus[10], localidade[25];
+    char nome[80], abv[8], campus[10], localidade[25];
 } t_estrutura_escola;
 
 // Estrutura utilizadores
@@ -36,7 +36,7 @@ int menu_inicial();
 int menu_de_estatisticas();
 int menu_secundario(char opcao1[50], char opcao2[50]);
 int menu_registar_mostrar();
-char confirmar_saida(char texto[50]);
+char confirmar_reposta(char texto[50]);
 
 // Escola
 int prenche_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola);
@@ -68,14 +68,21 @@ int ler_dados_trasacoes(t_transacoes transacoes[MAX_TRASANCAO], int n_transacoes
 
 int main()
 {
+    system("cls");
     setlocale(LC_ALL, "Portuguese"); // defenir a lingua portuguesa
     t_estrutura_escola escola[MAX_ESCOLA];
     t_estrutura_utilizadores utilizadores[MAX_UTILIZADORES];
     t_transacoes transacoes[MAX_UTILIZADORES];
     int opcao1, opcao2;
     int n_utilizadores = 0, n_escola = 0, n_trasancoes = 0;
+    char sair;
+
+    n_escola = ler_dados_fichiero_escola(escola, n_escola);
+    n_utilizadores = ler_dados_utilizador(utilizadores, n_utilizadores);
+    n_trasancoes = ler_dados_trasacoes(transacoes, n_trasancoes);
     do
     {
+
         opcao1 = NULL;
         system("cls");
 
@@ -180,21 +187,22 @@ int main()
                 break;
 
             case 2:
-                printf("aqui");
                 n_escola = ler_dados_fichiero_escola(escola, n_escola);
-                printf("\naqui");
                 n_utilizadores = ler_dados_utilizador(utilizadores, n_utilizadores);
-                printf("\naqui");
                 n_trasancoes = ler_dados_trasacoes(transacoes, n_trasancoes);
                 break;
             }
+            break;
 
         case 0:
-            // sair
+            sair = confirmar_reposta("Deseja Sair(S/N)");
             break;
         }
 
-    } while (opcao1 != 0);
+    } while (sair != 'S');
+    guadar_dados_escola(escola, n_escola);
+    guadar_dados_utilizador(utilizadores, n_utilizadores);
+    guadar_dados_trasacoes(transacoes, n_trasancoes);
     return 0;
 }
 
@@ -248,7 +256,7 @@ int menu_secundario(char opcao1[50], char opcao2[50])
 }
 
 // FUNCÃO CONFIRMAR SAIDA - 6 LINHAS
-char confirmar_saida(char texto[50])
+char confirmar_reposta(char texto[50])
 {
     char sair;
     printf("\n%s", texto);
@@ -274,18 +282,18 @@ int menu_de_estatisticas()
 int prenche_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
 {
 
-    printf("Indentifiçao da escola:%d", n_escola + 1);
+    printf("\nIndentificação da escola:%d", n_escola);
     escola[n_escola].id_escola = n_escola;
     printf("\nIntroduza nome da escola: ");
     fflush(stdin);
     scanf("%[^\n]", escola[n_escola].nome);
-    printf("Introduza a abreviatura da escola: ");
+    printf("\nIntroduza a abreviatura da escola: ");
     fflush(stdin);
     scanf("%[^\n]", escola[n_escola].abv);
-    printf("Introduza o campus: ");
+    printf("\nIntroduza o campus: ");
     fflush(stdin);
     scanf("%[^\n]", escola[n_escola].campus);
-    printf("Introduza a localidade da escola: ");
+    printf("\nIntroduza a localidade da escola: ");
     fflush(stdin);
     scanf("%[^\n]", escola[n_escola].localidade);
     n_escola++;
@@ -472,7 +480,7 @@ int verifica_nif(t_estrutura_utilizadores utilizadores[MAX_UTILIZADORES], int n_
             {
                 printf("Nome do aluno: %s", utilizadores[posicao].nome);
                 printf("\nNif do aluno: %d", utilizadores[posicao].nif);
-                confirmar = confirmar_saida("Este e o nif?(S/N)");
+                confirmar = confirmar_reposta("Este e o nif?(S/N)");
                 if (confirmar == 'S')
                     verifica_aluno = 1;
             }
@@ -597,7 +605,7 @@ void guadar_dados_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
     {
         fwrite(escola, sizeof(t_estrutura_escola), n_escola, ficheiro);
         fclose(ficheiro);
-        printf("Escola guardada com sucesso");
+        printf("Escola guardada com sucesso\n");
         _sleep(1);
     }
 }
@@ -613,9 +621,9 @@ void guadar_dados_utilizador(t_estrutura_utilizadores utilizador[MAX_UTILIZADORE
     }
     else
     {
-        fwrite(utilizador, sizeof(t_estrutura_escola), n_utilizador, ficheiro);
+        fwrite(utilizador, sizeof(t_estrutura_utilizadores), n_utilizador, ficheiro);
         fclose(ficheiro);
-        printf("\nUtilizador guadado com sucesso");
+        printf("Utilizador guadado com sucesso\n");
         _sleep(1);
     }
 }
@@ -645,7 +653,7 @@ int ler_dados_fichiero_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escol
     ficheiro = fopen("escola.dat", "rb");
     if (ficheiro == NULL)
     {
-        printf("Ficheiro Inexistente");
+        printf("\n Ficheiro Inexistente");
     }
     else
     {
@@ -657,11 +665,12 @@ int ler_dados_fichiero_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escol
         fread(escola, sizeof(t_estrutura_escola), n_escola, ficheiro);
 
         fclose(ficheiro);
-    }
-    // printf("N aluno:%d", n_utilizador);
-    printf("\nEscolas carregads com sucesso:");
+        // printf("N aluno:%d", n_utilizador);
+        printf("\nEscolas carregads com sucesso");
 
-    /*_sleep(1);*/
+        /*_sleep(1);*/
+    }
+
     return n_escola;
 }
 
@@ -672,21 +681,22 @@ int ler_dados_utilizador(t_estrutura_utilizadores utilizador[MAX_UTILIZADORES], 
     ficheiro = fopen("utilizador.dat", "rb");
     if (ficheiro == NULL)
     {
-        printf("Ficheiro Inexistente");
+        printf("\n Ficheiro Inexistente");
     }
     else
     {
         fseek(ficheiro, 0L, SEEK_END);
         numero_bytes = ftell(ficheiro);
-        n_utilizador = numero_bytes / sizeof(t_estrutura_escola);
+        n_utilizador = numero_bytes / sizeof(t_estrutura_utilizadores);
         fseek(ficheiro, 0L, SEEK_SET);
-        fread(utilizador, sizeof(t_estrutura_escola), n_utilizador, ficheiro);
+        fread(utilizador, sizeof(t_estrutura_utilizadores), n_utilizador, ficheiro);
 
         fclose(ficheiro);
+        // printf("N aluno:%d", n_utilizador);
+        printf("\nUtilizadores carregados com sucesso");
+        //_sleep(1);
     }
-    // printf("N aluno:%d", n_utilizador);
-    printf("\nUtilizadores carregados com sucesso");
-    //_sleep(1);
+
     return n_utilizador;
 }
 int ler_dados_trasacoes(t_transacoes transacoes[MAX_TRASANCAO], int n_transacoes)
@@ -696,21 +706,23 @@ int ler_dados_trasacoes(t_transacoes transacoes[MAX_TRASANCAO], int n_transacoes
     ficheiro = fopen("transacoes.dat", "rb");
     if (ficheiro == NULL)
     {
-        printf("Ficheiro Inexistente");
+        printf("\n Ficheiro Inexistente");
+        getch();
     }
     else
     {
         fseek(ficheiro, 0L, SEEK_END);
         numero_bytes = ftell(ficheiro);
-        n_transacoes = numero_bytes / sizeof(t_estrutura_escola);
+        n_transacoes = numero_bytes / sizeof(t_transacoes);
         fseek(ficheiro, 0L, SEEK_SET);
-        fread(transacoes, sizeof(t_estrutura_escola), n_transacoes, ficheiro);
+        fread(transacoes, sizeof(t_transacoes), n_transacoes, ficheiro);
 
         fclose(ficheiro);
+        // printf("N aluno:%d", n_utilizador);
+        printf("\nTrasações carregados com sucesso");
+        printf("\nClique num caracter para voltar para o menu inicial:");
+        getch();
     }
-    // printf("N aluno:%d", n_utilizador);
-    printf("\nTrasações carregados com sucesso");
-    printf("\nClique num caracter para voltar para o menu inicial:");
-    getch();
+
     return n_transacoes;
 }
