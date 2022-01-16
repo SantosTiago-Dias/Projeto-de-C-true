@@ -59,8 +59,12 @@ void mostrar_transacao(t_transacoes trasancao[MAX_TRASANCAO], int n_trasacoes);
 
 // Ficheiros
 void guadar_dados_escola(t_estrutura_escola utilizador[MAX_UTILIZADORES], int n_utilizador);
+void guadar_dados_utilizador(t_estrutura_utilizadores utilizador[MAX_UTILIZADORES], int n_utilizador);
+void guadar_dados_trasacoes(t_transacoes transacoes[MAX_TRASANCAO], int n_transacoes);
 
 int ler_dados_fichiero_escola(t_estrutura_escola utilizador[MAX_UTILIZADORES], int n_utilizador);
+int ler_dados_utilizador(t_estrutura_utilizadores utilizador[MAX_UTILIZADORES], int n_utilizador);
+int ler_dados_trasacoes(t_transacoes transacoes[MAX_TRASANCAO], int n_transacoes);
 
 int main()
 {
@@ -171,14 +175,20 @@ int main()
             case 1:
 
                 guadar_dados_escola(escola, n_escola);
-
+                guadar_dados_utilizador(utilizadores, n_utilizadores);
+                guadar_dados_trasacoes(transacoes, n_trasancoes);
                 break;
 
             case 2:
+                printf("aqui");
                 n_escola = ler_dados_fichiero_escola(escola, n_escola);
+                printf("\naqui");
+                n_utilizadores = ler_dados_utilizador(utilizadores, n_utilizadores);
+                printf("\naqui");
+                n_trasancoes = ler_dados_trasacoes(transacoes, n_trasancoes);
+                break;
             }
-            break;
-            break;
+
         case 0:
             // sair
             break;
@@ -574,11 +584,29 @@ void mostrar_transacao(t_transacoes trasancao[MAX_TRASANCAO], int n_trasacoes)
 
 // FICHEIROS
 
-void guadar_dados_escola(t_estrutura_escola utilizador[MAX_UTILIZADORES], int n_utilizador)
+void guadar_dados_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
 {
     FILE *ficheiro;
 
-    ficheiro = fopen("dados.dat", "wb");
+    ficheiro = fopen("escola.dat", "wb");
+    if (ficheiro == NULL)
+    {
+        printf("Ficheiro Inexistente");
+    }
+    else
+    {
+        fwrite(escola, sizeof(t_estrutura_escola), n_escola, ficheiro);
+        fclose(ficheiro);
+        printf("Escola guardada com sucesso");
+        _sleep(1);
+    }
+}
+
+void guadar_dados_utilizador(t_estrutura_utilizadores utilizador[MAX_UTILIZADORES], int n_utilizador)
+{
+    FILE *ficheiro;
+
+    ficheiro = fopen("utilizador.dat", "wb");
     if (ficheiro == NULL)
     {
         printf("Ficheiro Inexistente");
@@ -587,16 +615,61 @@ void guadar_dados_escola(t_estrutura_escola utilizador[MAX_UTILIZADORES], int n_
     {
         fwrite(utilizador, sizeof(t_estrutura_escola), n_utilizador, ficheiro);
         fclose(ficheiro);
-        printf("Guadado com sucesso");
+        printf("\nUtilizador guadado com sucesso");
+        _sleep(1);
+    }
+}
+
+void guadar_dados_trasacoes(t_transacoes transacoes[MAX_TRASANCAO], int n_transacoes)
+{
+    FILE *ficheiro;
+
+    ficheiro = fopen("transacoes.dat", "wb");
+    if (ficheiro == NULL)
+    {
+        printf("Ficheiro Inexistente");
+    }
+    else
+    {
+        fwrite(transacoes, sizeof(t_transacoes), n_transacoes, ficheiro);
+        fclose(ficheiro);
+        printf("Trasacoes guadadas com sucesso");
         getch();
     }
 }
 
-int ler_dados_fichiero_escola(t_estrutura_escola utilizador[MAX_UTILIZADORES], int n_utilizador)
+int ler_dados_fichiero_escola(t_estrutura_escola escola[MAX_ESCOLA], int n_escola)
 {
     int numero_bytes;
     FILE *ficheiro;
-    ficheiro = fopen("dados.dat", "rb");
+    ficheiro = fopen("escola.dat", "rb");
+    if (ficheiro == NULL)
+    {
+        printf("Ficheiro Inexistente");
+    }
+    else
+    {
+
+        fseek(ficheiro, 0L, SEEK_END);
+        numero_bytes = ftell(ficheiro);
+        n_escola = numero_bytes / sizeof(t_estrutura_escola);
+        fseek(ficheiro, 0L, SEEK_SET);
+        fread(escola, sizeof(t_estrutura_escola), n_escola, ficheiro);
+
+        fclose(ficheiro);
+    }
+    // printf("N aluno:%d", n_utilizador);
+    printf("\nEscolas carregads com sucesso:");
+
+    /*_sleep(1);*/
+    return n_escola;
+}
+
+int ler_dados_utilizador(t_estrutura_utilizadores utilizador[MAX_UTILIZADORES], int n_utilizador)
+{
+    int numero_bytes;
+    FILE *ficheiro;
+    ficheiro = fopen("utilizador.dat", "rb");
     if (ficheiro == NULL)
     {
         printf("Ficheiro Inexistente");
@@ -612,7 +685,32 @@ int ler_dados_fichiero_escola(t_estrutura_escola utilizador[MAX_UTILIZADORES], i
         fclose(ficheiro);
     }
     // printf("N aluno:%d", n_utilizador);
-    printf("\nClique num caracter:");
-    getch();
+    printf("\nUtilizadores carregados com sucesso");
+    //_sleep(1);
     return n_utilizador;
+}
+int ler_dados_trasacoes(t_transacoes transacoes[MAX_TRASANCAO], int n_transacoes)
+{
+    int numero_bytes;
+    FILE *ficheiro;
+    ficheiro = fopen("transacoes.dat", "rb");
+    if (ficheiro == NULL)
+    {
+        printf("Ficheiro Inexistente");
+    }
+    else
+    {
+        fseek(ficheiro, 0L, SEEK_END);
+        numero_bytes = ftell(ficheiro);
+        n_transacoes = numero_bytes / sizeof(t_estrutura_escola);
+        fseek(ficheiro, 0L, SEEK_SET);
+        fread(transacoes, sizeof(t_estrutura_escola), n_transacoes, ficheiro);
+
+        fclose(ficheiro);
+    }
+    // printf("N aluno:%d", n_utilizador);
+    printf("\nTrasações carregados com sucesso");
+    printf("\nClique num caracter para voltar para o menu inicial:");
+    getch();
+    return n_transacoes;
 }
